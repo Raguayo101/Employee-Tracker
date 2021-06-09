@@ -55,7 +55,7 @@ const mainHub = () => {
                     break;
 
                 case 'View employees?':
-                    viewEmployee();
+                    viewEmployees();
                     break;
 
                 default:
@@ -65,6 +65,7 @@ const mainHub = () => {
         })
 };
 
+// allows the user to view all the departments and then returns them to the mainHub
 const viewDepartment = () => {
     connection.query('SELECT * FROM department', (err, results) => {
         if (err) throw err;
@@ -73,5 +74,23 @@ const viewDepartment = () => {
         mainHub();
     });
 };
+// Allows user to view all roles and then returns them to the mainHub
+const viewRole = () => {
+    connection.query('SELECT * FROM role', (err, results) => {
+        if (err) throw err;
+        console.log("displaying all roles");
+        console.table(results);
+        mainHub();
+    });
+};
 
+// Allows user to view all employees and then returns them to the mainHub
+const viewEmployees = () => {
+    connection.query('SELECT * FROM employees', (err, results) => {
+        if (err) throw err;
+        console.log("displaying all employees");
+        console.table(results);
+        mainHub();
+    });
+};
 
