@@ -193,3 +193,29 @@ const addEmployee = () => {
         })
     });
 }
+
+// allows user to add department to SQL
+const addDepartment = () => {
+    connection.query('SELECT * FROM department', (err, results) =>{
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                name: "department",
+                type: "input",
+                message: "Please input the name for new Department?",
+            }    
+        ])
+        .then((answer) => {
+
+            connection.query('INSERT INTO department SET ?',
+            {
+                name: answer.department
+            },
+            (error) => {
+                if (error) throw err;
+                console.log('Department added successfully!');
+                mainHub();
+              });
+        })
+    });
+}
