@@ -29,7 +29,8 @@ const mainHub = () => {
             "Add an additoinal employee?",
             "View departments?",
             'View roles?',
-            'View employees?'
+            'View employees?',
+            "Update Employess?"
         ]
     })
         .then((answer) => {
@@ -57,6 +58,10 @@ const mainHub = () => {
                 case 'View employees?':
                     viewEmployees();
                     break;
+                
+                case 'Update Employess?':
+                    updateEmployee();
+                    break;    
 
                 default:
                     console.log(`Invalid action: ${answer.action}`);
@@ -96,7 +101,7 @@ const viewEmployees = () => {
 
 // adds an additonal role to our SQL
 const addRole = () => {
-    connection.query('SELECT * FROM role', (err, results) =>{
+    connection.query('SELECT * FROM department', (err, results) =>{
         if (err) throw err;
         inquirer.prompt([
             {
@@ -113,18 +118,18 @@ const addRole = () => {
                 type: 'rawlist',
                 choices(){
                     const departmentChoice = [];
-                    results.forEach(({title}) => {
-                        departmentChoice.push(title);
+                    results.forEach(({name}) => {
+                        departmentChoice.push(name);
                     });
                     return departmentChoice;
                 },
-                message: 'what department would you like to choose?'
+                message: 'what department would you like to choose?',
             },
         ])
         .then((answer) => {
             let chosenDepartment;
             results.forEach((role) =>{
-                if(role.title === answer.department){
+                if(role.name === answer.department){
                     chosenDepartment = role;
                 }
             })
@@ -166,9 +171,11 @@ const addEmployee = () => {
                     results.forEach(({title}) => {
                         roleChoice.push(title);
                     });
-                    return roleChoice;
+                    // easers copies that were being generated
+                    let clearRoleChoice = [...new Set(roleChoice)];
+                    return clearRoleChoice;
                 },
-                message: 'what role would you like to choose?'
+                message: 'what role would you like to choose?',
             },
         ])
         .then((answer) => {
@@ -183,7 +190,7 @@ const addEmployee = () => {
             {
                 first_name: answer.title, 
                 last_name: answer.salary,
-                role_id: chosenRole.id
+                role_id: chosenRole.id,
             },
             (error) => {
                 if (error) throw err;
@@ -214,6 +221,71 @@ const addDepartment = () => {
             (error) => {
                 if (error) throw err;
                 console.log('Department added successfully!');
+                mainHub();
+              });
+        })
+    });
+}
+
+const updateEmployee = () => {
+    connection.query('SELECT * FROM employees, role', (err, results) =>{
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                name: 'employee',
+                type: 'rawlist',
+                choices(){
+                    const employeeChoice = [];
+                    results.forEach(({last_name}) => {
+                        employeeChoice.push(last_name);
+                    });
+                    // easers copies that were being generated
+                    let clearemployeeChoice = [...new Set(employeeChoice)];
+                    return clearemployeeChoice;
+                },
+                message: 'Which employee would you like to update?'
+            },
+            {
+                name: 'role',
+                type: 'rawlist',
+                choices(){
+                    const roleChoice = [];
+                    results.forEach(({title}) => {
+                        roleChoice.push(title);
+                    });
+                    // easers copies that were being generated
+                    let clearRoleChoice = [...new Set(roleChoice)];
+                    return clearRoleChoice;
+                },
+                message: 'what role would you like to update?'
+            }
+        ])
+        .then((answer) => {
+            let chosenEmployee;
+            let chosenRole;
+            results.forEach((employee) =>{
+                if(employee.last_name === answer.employee){
+                    chosenEmployee = employee;
+                }
+            })
+            results.forEach((role) =>{
+                if(role.title === answer.role){
+                    chosenRole = role;
+                }
+            })
+
+            connection.query('UPDATE employee SET ? WHERE ?',
+            [
+                {
+                    role_id: chosenRole,
+                },
+                {
+                    last_name:chosenEmployee,
+                }
+            ],
+            (error) => {
+                if (error) throw err;
+                console.log('Employee updated successfully!');
                 mainHub();
               });
         })
