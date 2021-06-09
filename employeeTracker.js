@@ -143,3 +143,53 @@ const addRole = () => {
         })
     });
 }
+
+// adds new employee to list 
+const addEmployee = () => {
+    connection.query('SELECT * FROM employees, role', (err, results) =>{
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                name: "first_name",
+                type: "input",
+                message: "Please input the first name of new employee?",
+            }, {
+                name: "last_name",
+                type: "input",
+                message: "Please input the last name of new employee?",
+            },
+            {
+                name: 'role',
+                type: 'rawlist',
+                choices(){
+                    const roleChoice = [];
+                    results.forEach(({title}) => {
+                        roleChoice.push(title);
+                    });
+                    return roleChoice;
+                },
+                message: 'what role would you like to choose?'
+            },
+        ])
+        .then((answer) => {
+            let chosenRole;
+            results.forEach((role) =>{
+                if(role.title === answer.role){
+                    chosenRole = role;
+                }
+            })
+
+            connection.query('INSERT INTO employee SET ?',
+            {
+                first_name: answer.title, 
+                last_name: answer.salary,
+                role_id: chosenRole.id
+            },
+            (error) => {
+                if (error) throw err;
+                console.log('Employee added successfully!');
+                mainHub();
+              });
+        })
+    });
+}
