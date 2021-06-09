@@ -2,24 +2,24 @@ const mysql = require('mysql');
 const inquirer = require('inquirer');
 
 const connection = mysql.createConnection({
-  host: 'localhost',
+    host: 'localhost',
 
-  // Your port; if not 3306
-  port: 3306,
+    // Your port; if not 3306
+    port: 3306,
 
-  // Your username
-  user: 'root',
+    // Your username
+    user: 'root',
 
-  // Be sure to update with your own MySQL password!
-  password: '',
-  database: 'employee_trackerDB',
+    // Be sure to update with your own MySQL password!
+    password: '',
+    database: 'employee_trackerDB',
 });
 
 connection.connect((err) => {
-  if (err) throw err;
+    if (err) throw err;
 });
 
-const mainHub = () =>{
+const mainHub = () => {
     inquirer.prompt({
         name: 'initial',
         type: 'list',
@@ -33,9 +33,35 @@ const mainHub = () =>{
             'View one of the employees?'
         ]
     })
-    .then((answer) => {
-        switch(answer.initial){
-            
-        }
-    })
+        .then((answer) => {
+            switch (answer.initial) {
+                case 'Add an additional department?':
+                    addDepartment();
+                    break;
+
+                case 'Add an additional role?':
+                    addRole();
+                    break;
+
+                case 'Add an additoinal employee?':
+                    addEmployee();
+                    break;
+
+                case 'View a department?':
+                    viewDepartment();
+                    break;
+
+                case 'View one of the roles?':
+                    viewRole();
+                    break;
+
+                case 'View one of the employees?':
+                    viewEmployee();
+                    break;
+
+                default:
+                    console.log(`Invalid action: ${answer.action}`);
+                    break;
+            }
+        })
 }
