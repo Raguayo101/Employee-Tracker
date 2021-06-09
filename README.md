@@ -1,5 +1,7 @@
 Employee_Tracker
 
+Video Link: https://www.youtube.com/watch?v=XkAIlNDy-b4&ab_channel=RodrigoAguayo
+
     
 ## Table of Contents:
 * [Installation](#installation)
