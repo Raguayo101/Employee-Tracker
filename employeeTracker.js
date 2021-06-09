@@ -1,24 +1,23 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 
+// creating connection to mysql
 const connection = mysql.createConnection({
     host: 'localhost',
 
-    // Your port; if not 3306
     port: 3306,
-
-    // Your username
     user: 'root',
 
-    // Be sure to update with your own MySQL password!
-    password: '',
-    database: 'employee_trackerDB',
+    password: 'PLEASEloveme101!',
+    database: 'employee_trackerdb',
 });
 
 connection.connect((err) => {
     if (err) throw err;
+    mainHub();
 });
 
+// inital questions user will be prompted to answer when starting program
 const mainHub = () => {
     inquirer.prompt({
         name: 'initial',
@@ -28,9 +27,9 @@ const mainHub = () => {
             'Add an additional department?',
             'Add an additional role?',
             "Add an additoinal employee?",
-            "View a department?",
-            'View one of the roles?',
-            'View one of the employees?'
+            "View departments?",
+            'View roles?',
+            'View employees?'
         ]
     })
         .then((answer) => {
@@ -47,15 +46,15 @@ const mainHub = () => {
                     addEmployee();
                     break;
 
-                case 'View a department?':
+                case 'View departments?':
                     viewDepartment();
                     break;
 
-                case 'View one of the roles?':
+                case 'View roles?':
                     viewRole();
                     break;
 
-                case 'View one of the employees?':
+                case 'View employees?':
                     viewEmployee();
                     break;
 
@@ -64,4 +63,15 @@ const mainHub = () => {
                     break;
             }
         })
-}
+};
+
+const viewDepartment = () => {
+    connection.query('SELECT * FROM department', (err, results) => {
+        if (err) throw err;
+        console.log("displaying all departments");
+        console.table(results);
+        mainHub();
+    });
+};
+
+
