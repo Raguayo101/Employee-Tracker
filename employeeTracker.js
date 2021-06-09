@@ -94,3 +94,52 @@ const viewEmployees = () => {
     });
 };
 
+// adds an additonal role to our SQL
+const addRole = () => {
+    connection.query('SELECT * FROM role', (err, results) =>{
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                name: "title",
+                type: "input",
+                message: "Please input the title for the new role?",
+            }, {
+                name: "salary",
+                type: "input",
+                message: "Please input the new salary for the new role?",
+            },
+            {
+                name: 'department',
+                type: 'rawlist',
+                choices(){
+                    const departmentChoice = [];
+                    results.forEach(({title}) => {
+                        departmentChoice.push(title);
+                    });
+                    return departmentChoice;
+                },
+                message: 'what department would you like to choose?'
+            },
+        ])
+        .then((answer) => {
+            let chosenDepartment;
+            results.forEach((role) =>{
+                if(role.title === answer.department){
+                    chosenDepartment = role;
+                }
+            })
+
+            connection.query('INSERT INTO role SET ?',
+            {
+                title: answer.title, 
+                salary: answer.salary,
+                department_id: chosenDepartment.id
+            },
+            (error) => {
+                if (error) throw err;
+                console.log('Role added successfully!');
+                mainHub();
+              });
+        })
+    });
+}
