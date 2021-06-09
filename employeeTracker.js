@@ -64,7 +64,7 @@ const mainHub = () => {
                     break;    
 
                 default:
-                    console.log(`Invalid action: ${answer.action}`);
+                    console.log(`Invalid action: ${answer.initial}`);
                     break;
             }
         })
@@ -186,10 +186,10 @@ const addEmployee = () => {
                 }
             })
 
-            connection.query('INSERT INTO employee SET ?',
+            connection.query('INSERT INTO employees SET ?',
             {
-                first_name: answer.title, 
-                last_name: answer.salary,
+                first_name: answer.first_name, 
+                last_name: answer.last_name,
                 role_id: chosenRole.id,
             },
             (error) => {
@@ -274,7 +274,7 @@ const updateEmployee = () => {
                 }
             })
 
-            connection.query('UPDATE employee SET ? WHERE ?',
+            connection.query('UPDATE employees SET ? WHERE ?',
             [
                 {
                     role_id: chosenRole,
